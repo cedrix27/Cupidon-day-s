@@ -136,7 +136,7 @@ export default function Inscription() {
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-4 py-12">
-      <div className="max-w-md w-full animate-slide-up">
+      <div className="max-w-lg w-full animate-slide-up">
         <Link
           href="/"
           className="inline-flex items-center gap-2 mb-6 text-sm no-underline transition-colors"
@@ -148,15 +148,15 @@ export default function Inscription() {
           Retour
         </Link>
 
-        <div className="glass p-8">
+        <div className="glass p-10">
           <h1 className="font-serif text-3xl font-bold mb-2 gradient-text">
             Inscription
           </h1>
-          <p className="mb-6" style={{ color: "var(--text-secondary)" }}>
+          <p className="mb-8" style={{ color: "var(--text-secondary)" }}>
             Rejoins la liste des profils Cupidon
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-7">
+          <form onSubmit={handleSubmit} className="space-y-8">
             {/* Photo upload */}
             <div>
               <label className="block text-sm font-medium mb-3">
