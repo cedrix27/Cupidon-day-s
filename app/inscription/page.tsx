@@ -235,7 +235,7 @@ export default function Inscription() {
                   value={prenom}
                   onChange={(e) => setPrenom(e.target.value)}
                   placeholder="Ton prenom"
-                  className="w-full pl-11 pr-4 py-3 rounded-xl outline-none input-glass"
+                  className="w-full pl-12 pr-4 py-3 rounded-xl outline-none input-glass"
                 />
               </div>
             </div>
@@ -292,7 +292,7 @@ export default function Inscription() {
                   value={numero}
                   onChange={(e) => setNumero(e.target.value)}
                   placeholder="+33612345678"
-                  className="w-full pl-11 pr-4 py-3 rounded-xl outline-none input-glass"
+                  className="w-full pl-12 pr-4 py-3 rounded-xl outline-none input-glass"
                 />
               </div>
               <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>

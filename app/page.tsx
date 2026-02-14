@@ -5,7 +5,7 @@ export default function Home() {
     <main className="min-h-screen flex flex-col items-center justify-center px-4 py-12">
       <div className="max-w-lg w-full text-center animate-slide-up">
         {/* Hero SVG Heart */}
-        <div className="inline-block mb-6 animate-heartbeat">
+        <div className="inline-block mb-8 animate-heartbeat">
           <svg width="80" height="80" viewBox="0 0 24 24" fill="none" className="animate-heart-glow">
             <defs>
               <linearGradient id="heartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -22,12 +22,12 @@ export default function Home() {
         </div>
 
         {/* Title */}
-        <h1 className="font-serif text-5xl font-bold mb-3 gradient-text">
+        <h1 className="font-serif text-5xl font-bold mb-4 gradient-text">
           Cupidon
         </h1>
 
         {/* Pill badge */}
-        <div className="mb-10">
+        <div className="mb-12">
           <span className="pill-badge">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
               <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
@@ -38,7 +38,7 @@ export default function Home() {
         </div>
 
         {/* How it works — Glass card */}
-        <div className="glass p-6 mb-8 text-left space-y-5">
+        <div className="glass p-8 mb-10 text-left space-y-6">
           <h2 className="font-serif text-xl font-semibold mb-5 text-center" style={{ color: "var(--accent-light)" }}>
             Comment ca marche ?
           </h2>
@@ -89,7 +89,7 @@ export default function Home() {
           </div>
         </div>
 
-        <p className="text-sm mb-8" style={{ color: "var(--text-secondary)" }}>
+        <p className="text-sm mb-10" style={{ color: "var(--text-secondary)" }}>
           Ce site est temporaire et sera supprime apres 24h. Tes donnees seront effacees.
         </p>
 
