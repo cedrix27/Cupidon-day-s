@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Header from "@/components/Header";
 import ProfilCard from "@/components/ProfilCard";
 import Link from "next/link";
@@ -17,28 +17,44 @@ export default function Profils() {
   const [fleches, setFleches] = useState(2);
   const [loading, setLoading] = useState(true);
 
+  const refreshData = useCallback(async () => {
+    try {
+      const [tokenRes, profilsRes] = await Promise.all([
+        fetch("/api/token"),
+        fetch("/api/profils"),
+      ]);
+
+      const tokenData = await tokenRes.json();
+      const profilsData = await profilsRes.json();
+
+      setFleches(tokenData.fleches_restantes ?? 2);
+      setProfils(profilsData.profils ?? []);
+    } catch {
+      console.error("Erreur de chargement");
+    }
+  }, []);
+
   useEffect(() => {
     const init = async () => {
-      try {
-        const [tokenRes, profilsRes] = await Promise.all([
-          fetch("/api/token"),
-          fetch("/api/profils"),
-        ]);
+      await refreshData();
+      setLoading(false);
+    };
+    init();
+  }, [refreshData]);
 
-        const tokenData = await tokenRes.json();
-        const profilsData = await profilsRes.json();
-
-        setFleches(tokenData.fleches_restantes ?? 2);
-        setProfils(profilsData.profils ?? []);
-      } catch {
-        console.error("Erreur de chargement");
-      } finally {
-        setLoading(false);
+  // Auto-refresh when user comes back from WhatsApp
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        refreshData();
       }
     };
 
-    init();
-  }, []);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [refreshData]);
 
   return (
     <div className="min-h-screen">
@@ -63,11 +79,24 @@ export default function Profils() {
         )}
 
         {loading ? (
-          <div className="text-center py-12">
-            <div className="text-4xl mb-4 animate-pulse-heart">💘</div>
-            <p style={{ color: "var(--text-secondary)" }}>
-              Chargement des profils...
-            </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {[0, 1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="rounded-2xl p-5"
+                style={{
+                  background: "var(--bg-card)",
+                  border: "1px solid var(--border)",
+                }}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="skeleton h-5 w-24" />
+                  <div className="skeleton h-4 w-12" />
+                </div>
+                <div className="skeleton h-1.5 w-full mb-4" />
+                <div className="skeleton h-10 w-full" />
+              </div>
+            ))}
           </div>
         ) : profils.length === 0 ? (
           <div className="text-center py-12 animate-fade-in">
@@ -87,13 +116,14 @@ export default function Profils() {
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
-            {profils.map((profil) => (
-              <ProfilCard
-                key={profil.id}
-                profil={profil}
-                fleches={fleches}
-                onFlecheEnvoyee={(remaining) => setFleches(remaining)}
-              />
+            {profils.map((profil, index) => (
+              <div key={profil.id} className={`stagger-${Math.min(index + 1, 5)}`}>
+                <ProfilCard
+                  profil={profil}
+                  fleches={fleches}
+                  onFlecheEnvoyee={(remaining) => setFleches(remaining)}
+                />
+              </div>
             ))}
           </div>
         )}

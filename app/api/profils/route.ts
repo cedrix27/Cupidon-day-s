@@ -20,7 +20,8 @@ export async function GET() {
     }));
 
     return NextResponse.json({ profils });
-  } catch {
-    return NextResponse.json({ error: "Erreur serveur." }, { status: 500 });
+  } catch (err) {
+    console.error("API /api/profils error:", err);
+    return NextResponse.json({ error: "Erreur serveur.", details: String(err) }, { status: 500 });
   }
 }

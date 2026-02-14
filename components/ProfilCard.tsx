@@ -19,9 +19,12 @@ export default function ProfilCard({ profil, fleches, onFlecheEnvoyee }: ProfilC
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
+  const [showConfetti, setShowConfetti] = useState(false);
 
   const isFull = profil.demandes_recues >= profil.limite;
   const canSend = fleches > 0 && !isFull && !sent;
+  const gaugePercent = (profil.demandes_recues / profil.limite) * 100;
+  const isAlmostFull = profil.demandes_recues >= 4;
 
   const handleSendFleche = async () => {
     if (!canSend) return;
@@ -43,7 +46,10 @@ export default function ProfilCard({ profil, fleches, onFlecheEnvoyee }: ProfilC
       }
 
       setSent(true);
+      setShowConfetti(true);
       onFlecheEnvoyee(data.fleches_restantes);
+
+      setTimeout(() => setShowConfetti(false), 1200);
 
       setTimeout(() => {
         window.open(data.whatsappUrl, "_blank");
@@ -55,16 +61,32 @@ export default function ProfilCard({ profil, fleches, onFlecheEnvoyee }: ProfilC
     }
   };
 
-  const gaugePercent = (profil.demandes_recues / profil.limite) * 100;
-
   return (
     <div
-      className={`rounded-2xl p-5 card-hover ${isFull ? "opacity-50" : ""}`}
+      className={`rounded-2xl p-5 card-hover relative overflow-hidden ${isFull ? "opacity-50" : ""}`}
       style={{
         background: "var(--bg-card)",
         border: "1px solid var(--border)",
       }}
     >
+      {showConfetti && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          {["💕", "💗", "💖", "💘", "❤️", "💕", "💗", "💖"].map((h, i) => (
+            <span
+              key={i}
+              className="confetti-heart"
+              style={{
+                animationDelay: `${i * 0.1}s`,
+                left: `${10 + i * 10}%`,
+                top: "50%",
+              }}
+            >
+              {h}
+            </span>
+          ))}
+        </div>
+      )}
+
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-lg font-semibold">{profil.prenom}</h3>
         <span className="text-sm" style={{ color: "var(--text-secondary)" }}>
@@ -74,7 +96,7 @@ export default function ProfilCard({ profil, fleches, onFlecheEnvoyee }: ProfilC
 
       <div className="gauge-bar mb-4">
         <div
-          className="gauge-fill"
+          className={`gauge-fill ${isAlmostFull ? "gauge-fill-pulse" : ""}`}
           style={{ width: `${gaugePercent}%` }}
         />
       </div>

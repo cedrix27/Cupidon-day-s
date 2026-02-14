@@ -51,11 +51,22 @@ export default function Inscription() {
     return (
       <main className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center animate-fade-in">
-          <div className="text-6xl mb-4 animate-pulse-heart">💘</div>
+          <div className="text-6xl mb-4 animate-heart-glow inline-block">💘</div>
           <h2 className="text-2xl font-bold mb-2">Inscription reussie !</h2>
           <p style={{ color: "var(--text-secondary)" }}>
             Redirection vers les profils...
           </p>
+          <div className="flex justify-center gap-2 mt-4">
+            {["💕", "💗", "💖", "💘", "💕"].map((h, i) => (
+              <span
+                key={i}
+                className="confetti-heart"
+                style={{ animationDelay: `${i * 0.15}s`, left: `${30 + i * 10}%` }}
+              >
+                {h}
+              </span>
+            ))}
+          </div>
         </div>
       </main>
     );
@@ -85,39 +96,49 @@ export default function Inscription() {
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-sm font-medium mb-2">Prenom</label>
-            <input
-              type="text"
-              required
-              maxLength={30}
-              value={prenom}
-              onChange={(e) => setPrenom(e.target.value)}
-              placeholder="Ton prenom"
-              className="w-full px-4 py-3 rounded-xl outline-none focus:ring-2"
-              style={{
-                background: "var(--bg-card)",
-                border: "1px solid var(--border)",
-                color: "var(--text-primary)",
-              }}
-            />
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-base" style={{ color: "var(--text-secondary)" }}>
+                👤
+              </span>
+              <input
+                type="text"
+                required
+                maxLength={30}
+                value={prenom}
+                onChange={(e) => setPrenom(e.target.value)}
+                placeholder="Ton prenom"
+                className="w-full pl-11 pr-4 py-3 rounded-xl outline-none transition-all input-glow"
+                style={{
+                  background: "var(--bg-card)",
+                  border: "1px solid var(--border)",
+                  color: "var(--text-primary)",
+                }}
+              />
+            </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-2">
               Numero WhatsApp
             </label>
-            <input
-              type="tel"
-              required
-              value={numero}
-              onChange={(e) => setNumero(e.target.value)}
-              placeholder="+33612345678"
-              className="w-full px-4 py-3 rounded-xl outline-none focus:ring-2"
-              style={{
-                background: "var(--bg-card)",
-                border: "1px solid var(--border)",
-                color: "var(--text-primary)",
-              }}
-            />
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-base" style={{ color: "var(--text-secondary)" }}>
+                📱
+              </span>
+              <input
+                type="tel"
+                required
+                value={numero}
+                onChange={(e) => setNumero(e.target.value)}
+                placeholder="+33612345678"
+                className="w-full pl-11 pr-4 py-3 rounded-xl outline-none transition-all input-glow"
+                style={{
+                  background: "var(--bg-card)",
+                  border: "1px solid var(--border)",
+                  color: "var(--text-primary)",
+                }}
+              />
+            </div>
             <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>
               Ton numero ne sera jamais affiche publiquement.
             </p>
