@@ -5,6 +5,8 @@ import { useState, useMemo } from "react";
 interface Profil {
   id: string;
   prenom: string;
+  genre: string | null;
+  photo: string | null;
   demandes_recues: number;
   limite: number;
 }
@@ -100,19 +102,33 @@ export default function ProfilCard({ profil, fleches, onFlecheEnvoyee }: ProfilC
       )}
 
       <div className="flex items-center gap-3 mb-4">
-        {/* Colored avatar */}
-        <div
-          className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold text-lg"
-          style={{
-            background: `linear-gradient(135deg, ${colorFrom}, ${colorTo})`,
-            boxShadow: `0 2px 10px ${colorFrom}40`,
-          }}
-        >
-          {initial}
-        </div>
+        {/* Photo or colored avatar */}
+        {profil.photo ? (
+          <div
+            className="w-11 h-11 rounded-full flex-shrink-0 overflow-hidden"
+            style={{ boxShadow: `0 2px 10px ${colorFrom}40` }}
+          >
+            <img src={profil.photo} alt={profil.prenom} className="w-full h-full object-cover" />
+          </div>
+        ) : (
+          <div
+            className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold text-lg"
+            style={{
+              background: `linear-gradient(135deg, ${colorFrom}, ${colorTo})`,
+              boxShadow: `0 2px 10px ${colorFrom}40`,
+            }}
+          >
+            {initial}
+          </div>
+        )}
 
         <div className="flex-1 min-w-0">
           <h3 className="text-lg font-semibold truncate">{profil.prenom}</h3>
+          {profil.genre && (
+            <span className="text-xs" style={{ color: "var(--text-secondary)" }}>
+              {profil.genre === "homme" ? "Homme" : profil.genre === "femme" ? "Femme" : "Autre"}
+            </span>
+          )}
           <span className="text-xs flex items-center gap-1" style={{ color: "var(--text-secondary)" }}>
             {Array.from({ length: profil.limite }).map((_, i) => (
               <svg

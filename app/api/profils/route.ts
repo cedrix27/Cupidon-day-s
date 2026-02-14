@@ -15,6 +15,8 @@ export async function GET() {
     const profils = snapshot.docs.map((doc) => ({
       id: doc.id,
       prenom: doc.data().prenom,
+      genre: doc.data().genre || null,
+      photo: doc.data().photo || null,
       demandes_recues: doc.data().demandes_recues,
       limite: doc.data().limite,
     }));

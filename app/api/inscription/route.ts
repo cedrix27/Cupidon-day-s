@@ -7,9 +7,9 @@ export async function POST(req: NextRequest) {
   try {
     const adminDb = getAdminDb();
     const body = await req.json();
-    const { prenom, numero, consentement_affichage, consentement_contact } = body;
+    const { prenom, numero, genre, photo, consentement_affichage, consentement_contact } = body;
 
-    if (!prenom || !numero || !consentement_affichage || !consentement_contact) {
+    if (!prenom || !numero || !genre || !consentement_affichage || !consentement_contact) {
       return NextResponse.json(
         { error: "Tous les champs sont requis et les consentements doivent être acceptés." },
         { status: 400 }
@@ -39,9 +39,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const genreClean = ["homme", "femme", "autre"].includes(genre) ? genre : "autre";
+
     const docRef = await adminDb.collection("profiles").add({
       prenom: prenomClean,
       numero: numeroClean,
+      genre: genreClean,
+      photo: photo || null,
       demandes_recues: 0,
       limite: 5,
       consentement_affichage,

@@ -8,6 +8,8 @@ import Link from "next/link";
 interface Profil {
   id: string;
   prenom: string;
+  genre: string | null;
+  photo: string | null;
   demandes_recues: number;
   limite: number;
 }

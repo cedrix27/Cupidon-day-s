@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -8,15 +8,49 @@ export default function Inscription() {
   const router = useRouter();
   const [prenom, setPrenom] = useState("");
   const [numero, setNumero] = useState("");
+  const [genre, setGenre] = useState("");
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photoBase64, setPhotoBase64] = useState<string | null>(null);
   const [consentAffichage, setConsentAffichage] = useState(false);
   const [consentContact, setConsentContact] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      setError("La photo ne doit pas depasser 2 Mo.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const result = reader.result as string;
+      setPhotoPreview(result);
+      setPhotoBase64(result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const removePhoto = () => {
+    setPhotoPreview(null);
+    setPhotoBase64(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (!genre) {
+      setError("Choisis ton genre.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -26,6 +60,8 @@ export default function Inscription() {
         body: JSON.stringify({
           prenom,
           numero,
+          genre,
+          photo: photoBase64 || null,
           consentement_affichage: consentAffichage,
           consentement_contact: consentContact,
         }),
@@ -51,7 +87,6 @@ export default function Inscription() {
     return (
       <main className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center animate-scale-in">
-          {/* Success SVG heart */}
           <div className="inline-block mb-4 animate-heartbeat">
             <svg width="72" height="72" viewBox="0 0 24 24" fill="none" className="animate-heart-glow">
               <defs>
@@ -78,7 +113,6 @@ export default function Inscription() {
           <p style={{ color: "var(--text-secondary)" }}>
             Redirection vers les profils...
           </p>
-          {/* Confetti explosion */}
           <div className="relative h-32 mt-4">
             {Array.from({ length: 12 }).map((_, i) => (
               <span
@@ -122,7 +156,69 @@ export default function Inscription() {
             Rejoins la liste des profils Cupidon
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-7">
+            {/* Photo upload */}
+            <div>
+              <label className="block text-sm font-medium mb-3">
+                Photo <span className="font-normal" style={{ color: "var(--text-secondary)" }}>(optionnel)</span>
+              </label>
+              <div className="flex items-center gap-4">
+                <div
+                  className="w-20 h-20 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden cursor-pointer transition-all hover:scale-105"
+                  style={{
+                    background: photoPreview ? "transparent" : "linear-gradient(135deg, var(--accent), var(--accent-light))",
+                    border: "2px dashed var(--glass-border)",
+                  }}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {photoPreview ? (
+                    <img src={photoPreview} alt="Preview" className="w-full h-full object-cover" />
+                  ) : (
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                      <circle cx="8.5" cy="8.5" r="1.5" />
+                      <polyline points="21 15 16 10 5 21" />
+                    </svg>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                    style={{
+                      background: "rgba(230, 57, 116, 0.1)",
+                      color: "var(--accent-light)",
+                      border: "1px solid rgba(230, 57, 116, 0.2)",
+                    }}
+                  >
+                    Choisir une photo
+                  </button>
+                  {photoPreview && (
+                    <button
+                      type="button"
+                      onClick={removePhoto}
+                      className="text-xs ml-3 transition-colors"
+                      style={{ color: "var(--text-secondary)" }}
+                    >
+                      Supprimer
+                    </button>
+                  )}
+                  <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>
+                    JPG, PNG. 2 Mo max.
+                  </p>
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handlePhotoChange}
+                  className="hidden"
+                />
+              </div>
+            </div>
+
+            {/* Prenom */}
             <div>
               <label className="block text-sm font-medium mb-2">Prenom</label>
               <div className="relative">
@@ -144,6 +240,41 @@ export default function Inscription() {
               </div>
             </div>
 
+            {/* Genre */}
+            <div>
+              <label className="block text-sm font-medium mb-3">Genre</label>
+              <div className="flex gap-3">
+                {[
+                  { value: "homme", label: "Homme", icon: "M10 2a2 2 0 012 0v3h3a1 1 0 010 2h-3v3a1 1 0 01-2 0V7H7a1 1 0 010-2h3V2z" },
+                  { value: "femme", label: "Femme", icon: "M12 2a2 2 0 012 0v3h3a1 1 0 010 2h-3v3a1 1 0 01-2 0V7H7a1 1 0 010-2h3V2z" },
+                  { value: "autre", label: "Autre" },
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setGenre(option.value)}
+                    className="flex-1 py-3 rounded-xl text-sm font-medium transition-all"
+                    style={{
+                      background: genre === option.value
+                        ? "rgba(230, 57, 116, 0.2)"
+                        : "var(--glass-bg)",
+                      border: genre === option.value
+                        ? "1px solid var(--accent)"
+                        : "1px solid var(--glass-border)",
+                      color: genre === option.value
+                        ? "var(--accent-light)"
+                        : "var(--text-secondary)",
+                      backdropFilter: "blur(8px)",
+                      WebkitBackdropFilter: "blur(8px)",
+                    }}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Numero WhatsApp */}
             <div>
               <label className="block text-sm font-medium mb-2">
                 Numero WhatsApp
@@ -169,6 +300,7 @@ export default function Inscription() {
               </p>
             </div>
 
+            {/* Consentements */}
             <div className="space-y-3">
               <label className="flex items-start gap-3 cursor-pointer">
                 <input
@@ -210,7 +342,7 @@ export default function Inscription() {
             >
               {loading ? (
                 <>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="animate-spin" style={{ animation: "spinHeart 1s linear infinite" }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ animation: "spinHeart 1s linear infinite" }}>
                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                   </svg>
                   Inscription...
