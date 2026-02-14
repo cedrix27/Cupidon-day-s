@@ -21,20 +21,29 @@ export default function FlecheCounter({ fleches }: FlecheCounterProps) {
   }, [fleches]);
 
   return (
-    <div className="flex items-center gap-2" ref={containerRef}>
-      <span className="text-sm" style={{ color: "var(--text-secondary)" }}>
-        Fleches restantes :
-      </span>
-      <div className="flex gap-1">
+    <div className="pill-badge" ref={containerRef}>
+      <div className="flex gap-1.5 items-center">
         {[0, 1].map((i) => (
-          <span
+          <svg
             key={i}
-            className={`text-lg transition-opacity duration-300 ${i < fleches ? "" : "opacity-30"}`}
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke={i < fleches ? "var(--accent-light)" : "var(--text-secondary)"}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className={`transition-opacity duration-300 ${i < fleches ? "opacity-100" : "opacity-30"}`}
           >
-            🏹
-          </span>
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
         ))}
       </div>
+      <span className="text-xs" style={{ color: "var(--text-secondary)" }}>
+        {fleches} restante{fleches !== 1 ? "s" : ""}
+      </span>
     </div>
   );
 }

@@ -1,8 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
+});
 
 export const metadata: Metadata = {
   title: "Cupidon - Edition 24H",
@@ -17,8 +25,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <body className={`min-h-screen ${inter.className}`}>
+      <body className={`min-h-screen ${inter.variable} ${playfair.variable} ${inter.className}`}>
         <div className="floating-hearts">
+          <span>💕</span>
+          <span>💗</span>
+          <span>💘</span>
+          <span>💖</span>
           <span>💕</span>
           <span>💗</span>
           <span>💘</span>
